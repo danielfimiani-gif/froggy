@@ -7,10 +7,12 @@ Elegir una de las arquitecturas vistas en clase (MVP, MVC, ECS), y desarrollar u
 ## Requisitos del Sistema
 
 ### 1. Visual
+
 - Puede ser en 2D o 3D, a elección del alumno.
 - No es necesario que tenga gráficos lindos, con cubitos o cuadraditos de colores alcanza.
 
 ### 2. Gameplay
+
 - Con las teclas **W** y **S** se hace al personaje cambiar de carril.
 - Hay al menos **3 carriles** de autos, que van a diferentes velocidades y con diferente separación entre ellos.
 - Si algún obstáculo toca al personaje, este vuelve al principio.
