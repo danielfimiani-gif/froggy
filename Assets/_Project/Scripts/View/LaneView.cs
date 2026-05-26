@@ -1,11 +1,10 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 class LaneView : MonoBehaviour {
     private LaneModel model;
     public float zPosition;
-    public GameObject carPrefab;
+    public GameObject[] carPrefabs;
     private Dictionary<CarModel, GameObject> carGameObjects = new();
 
     public void Init(LaneModel model, float zPosition) {
@@ -15,7 +14,8 @@ class LaneView : MonoBehaviour {
         model.OnCarDeSpawned += HandleCarDeSpawned;
     }
     private void HandleCarSpawned(CarModel car) {
-        GameObject go = Instantiate(carPrefab);
+        var prefab = carPrefabs[UnityEngine.Random.Range(0, carPrefabs.Length)];
+        GameObject go = Instantiate(prefab, transform);
         CarView view = go.GetComponent<CarView>();
         view.Init(car, zPosition);
         carGameObjects[car] = go;
