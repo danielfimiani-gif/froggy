@@ -7,6 +7,9 @@ class CarView : MonoBehaviour {
     public void Init(CarModel model, float zPosition) {
         this.model = model;
         this.zPosition = zPosition;
+
+        float yRotation = model.Speed > 0 ? 90f : -90f;
+        transform.localRotation = Quaternion.Euler(0, yRotation, 0);
     }
 
     void Update() {

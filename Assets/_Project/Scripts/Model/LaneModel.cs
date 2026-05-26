@@ -39,13 +39,13 @@ class LaneModel {
 
         spawnTimer += deltaTime;
         if (spawnTimer >= spawnInterval) {
+            spawnTimer = 0;
             var car = new CarModel();
             car.PositionX = speed > 0 ? laneLengthMin : laneLengthMax;
             car.Speed = this.speed;
             car.Width = this.carWidth;
             cars.Add(car);
             OnCarSpawned?.Invoke(car);
-            spawnTimer = 0;
         }
     }
 }

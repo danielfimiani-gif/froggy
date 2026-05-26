@@ -19,11 +19,13 @@ class PlayerModel {
     public void MoveForward() {
         if (!isAlive) return;
 
-        if (CurrentRow + 1 >= totalRows)
+        if (CurrentRow >= totalRows - 1) return;
+
+        CurrentRow++;
+        OnMoved?.Invoke(CurrentRow);
+
+        if (CurrentRow == totalRows - 1) {
             OnReachedGoal?.Invoke();
-        else {
-            CurrentRow++;
-            OnMoved?.Invoke(CurrentRow);
         }
     }
 

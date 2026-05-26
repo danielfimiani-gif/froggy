@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 class GameController : MonoBehaviour {
     [SerializeField] private PlayerView playerView;
@@ -11,6 +13,8 @@ class GameController : MonoBehaviour {
     [SerializeField] private float playerHalfWidth = 0.4f;
     [SerializeField] private float laneMinX = -10;
     [SerializeField] private float laneMaxX = 10;
+
+    [SerializeField] private PlayerAudioView playerAudioView;
 
     private PlayerModel playerModel;
     private GameStateModel gameState;
@@ -31,6 +35,7 @@ class GameController : MonoBehaviour {
         }
 
         playerView.Init(playerModel);
+        if (playerAudioView != null) playerAudioView.Init(playerModel);
 
         playerModel.OnReachedGoal += HandlePlayerWon;
 
@@ -55,6 +60,7 @@ class GameController : MonoBehaviour {
             foreach (var car in lane.Cars) {
                 float dx = Math.Abs(car.PositionX - 0);
                 if (dx < (car.Width + playerHalfWidth * 2) / 2) {
+                    playerModel.Die();
                     playerModel.Respawn();
                     return;
                 }
@@ -64,5 +70,11 @@ class GameController : MonoBehaviour {
 
     void HandlePlayerWon() {
         gameState.SetWon();
+        StartCoroutine(LoadWonAfterDelay());
+    }
+
+    IEnumerator LoadWonAfterDelay() {
+        yield return new WaitForSeconds(1.5f);
+        SceneManager.LoadScene("WonScene");
     }
 }
