@@ -1,0 +1,4 @@
+enum EGameState {
+    Playing,
+    Won,
+}
