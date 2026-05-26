@@ -71,12 +71,12 @@ Esta capa contiene todas las clases necesarias para "mostrar" el juego en pantal
 
 ## Diagrama de arquitectura aplicada
 
-![Image](./diagram_001.png)
+![Image](./Docs/diagram_001.png)
 
 ### Ejemplo cuando usuario apreta W
 
-![Image](./diagram_002.png)
+![Image](./Docs/diagram_002.png)
 
 ### Ejemplo cuando la rana colisiona con un auto
 
-![Image](./diagram_003.png)
+![Image](./Docs/diagram_003.png)
