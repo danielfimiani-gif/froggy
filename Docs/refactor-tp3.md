@@ -14,4 +14,5 @@ levantar el motor de Unity.
 - GameStateModel, EGameState se cambió su accesibilidad a public para poder instanciarlo en los test.
 - CarView se cambio su accesibilidad a public para poder instanciarlo en playmode.
 - PlayerView se cambió su accesibilidad a pulbic para poder instanciarlo en playmode.
-- PlayerAudioView se cambió su accesibilidad a public para poder instanciarlo en pla
+- PlayerAudioView se cambió su accesibilidad a public para poder instanciarlo en playmode
+- CameraFollot se cambio su accesibilidad a public para poder instanciarlo en playmode.

@@ -80,3 +80,23 @@ Esta capa contiene todas las clases necesarias para "mostrar" el juego en pantal
 ### Ejemplo cuando la rana colisiona con un auto
 
 ![Image](./Docs/diagram_003.png)
+
+## TP3 Unit Testing 
+
+Como consigna para el TP3 se pide incorporar testing unitario.
+
+Para poder incrementar el porcentaje se realizaron algunas modificaciones, principalmente sobre la accesibilidad de las clases para poder ser instanciadas. Más detalle en el documento de [refactor](./Docs/refactor-tp3.md).
+
+Se deja también tanto del pasaje de los tests como de la covertura.
+
+### EditMode
+
+![Image](./Docs/editmode)
+
+### PlayMode
+
+![Image](./Docs/playmode)
+
+### Coverage
+
+![Image](./Docs/coverage)
