@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-class LaneView : MonoBehaviour {
+public class LaneView : MonoBehaviour {
     private LaneModel model;
     public float zPosition;
     public GameObject[] carPrefabs;
