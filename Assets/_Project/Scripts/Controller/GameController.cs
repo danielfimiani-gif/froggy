@@ -58,8 +58,7 @@ class GameController : MonoBehaviour {
         foreach (var lane in laneModels) {
             if (lane.RowIndex != playerModel.CurrentRow) continue;
             foreach (var car in lane.Cars) {
-                float dx = Math.Abs(car.PositionX - 0);
-                if (dx < (car.Width + playerHalfWidth * 2) / 2) {
+                if (CollisionDetector.OverLaps(car.PositionX, car.Width, playerView.transform.position.x, playerHalfWidth)) {
                     playerModel.Die();
                     playerModel.Respawn();
                     return;

@@ -1,51 +1,51 @@
 using System;
 
-class PlayerModel {
-    public int CurrentRow { get; private set; }
-    private bool isAlive = true;
+public class PlayerModel {
+  public int CurrentRow { get; private set; }
+  private bool isAlive = true;
 
-    private int totalRows;
+  private int totalRows;
 
-    public event Action<int> OnMoved;
-    public event Action OnDied;
-    public event Action OnReachedGoal;
-    public event Action OnRespawned;
+  public event Action<int> OnMoved;
+  public event Action OnDied;
+  public event Action OnReachedGoal;
+  public event Action OnRespawned;
 
-    public PlayerModel(int totalRows) {
-        this.totalRows = totalRows;
-        CurrentRow = 0;
+  public PlayerModel(int totalRows) {
+    this.totalRows = totalRows;
+    CurrentRow = 0;
+  }
+
+  public void MoveForward() {
+    if (!isAlive) return;
+
+    if (CurrentRow >= totalRows - 1) return;
+
+    CurrentRow++;
+    OnMoved?.Invoke(CurrentRow);
+
+    if (CurrentRow == totalRows - 1) {
+      OnReachedGoal?.Invoke();
     }
+  }
 
-    public void MoveForward() {
-        if (!isAlive) return;
+  public void MoveBackwards() {
+    if (!isAlive) return;
 
-        if (CurrentRow >= totalRows - 1) return;
-
-        CurrentRow++;
-        OnMoved?.Invoke(CurrentRow);
-
-        if (CurrentRow == totalRows - 1) {
-            OnReachedGoal?.Invoke();
-        }
+    if (CurrentRow > 0) {
+      CurrentRow--;
+      OnMoved?.Invoke(CurrentRow);
     }
+  }
 
-    public void MoveBackwards() {
-        if (!isAlive) return;
+  public void Die() {
+    isAlive = false;
+    OnDied?.Invoke();
+  }
 
-        if (CurrentRow > 0) {
-            CurrentRow--;
-            OnMoved?.Invoke(CurrentRow);
-        }
-    }
-
-    public void Die() {
-        isAlive = false;
-        OnDied?.Invoke();
-    }
-
-    public void Respawn() {
-        CurrentRow = 0;
-        isAlive = true;
-        OnRespawned?.Invoke();
-    }
+  public void Respawn() {
+    CurrentRow = 0;
+    isAlive = true;
+    OnRespawned?.Invoke();
+  }
 }

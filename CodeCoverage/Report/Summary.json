@@ -1,0 +1,36 @@
+{
+  "summary": {
+    "generatedon": "2026-06-28T15:48:17Z",
+    "parser": "MultiReportParser (2x OpenCoverParser)",
+    "assemblies": 1,
+    "classes": 13,
+    "files": 13,
+    "coveredlines": 34,
+    "uncoveredlines": 197,
+    "coverablelines": 231,
+    "totallines": 401,
+    "linecoverage": 14.7,
+    "coveredbranches": 0,
+    "totalbranches": 0,
+    "coveredmethods": 8,
+    "totalmethods": 48,
+    "methodcoverage": 16.6
+ },
+  "coverage": {
+    "assemblies": [
+      { "name": "Scripts", "classes": 13, "coverage": 14.7, "coveredlines": 34, "coverablelines": 231, "totallines": 401, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 16.6, "coveredmethods": 8, "totalmethods": 48, "classesinassembly": [
+        { "name": "CameraFollow", "coverage": 0, "coveredlines": 0, "coverablelines": 10, "totallines": 25, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 0, "coveredmethods": 0, "totalmethods": 3 },
+        { "name": "CarModel", "coverage": 0, "coveredlines": 0, "coverablelines": 3, "totallines": 9, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 0, "coveredmethods": 0, "totalmethods": 1 },
+        { "name": "CarView", "coverage": 0, "coveredlines": 0, "coverablelines": 10, "totallines": 23, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 0, "coveredmethods": 0, "totalmethods": 2 },
+        { "name": "CollisionDetector", "coverage": 100, "coveredlines": 3, "coverablelines": 3, "totallines": 7, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 100, "coveredmethods": 1, "totalmethods": 1 },
+        { "name": "GameController", "coverage": 0, "coveredlines": 0, "coverablelines": 48, "totallines": 79, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 0, "coveredmethods": 0, "totalmethods": 6 },
+        { "name": "GameStateModel", "coverage": 0, "coveredlines": 0, "coverablelines": 11, "totallines": 19, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 0, "coveredmethods": 0, "totalmethods": 4 },
+        { "name": "InputController", "coverage": 0, "coveredlines": 0, "coverablelines": 10, "totallines": 19, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 0, "coveredmethods": 0, "totalmethods": 2 },
+        { "name": "LaneModel", "coverage": 0, "coveredlines": 0, "coverablelines": 33, "totallines": 51, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 0, "coveredmethods": 0, "totalmethods": 5 },
+        { "name": "LaneView", "coverage": 0, "coveredlines": 0, "coverablelines": 26, "totallines": 37, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 0, "coveredmethods": 0, "totalmethods": 5 },
+        { "name": "PlayerAudioView", "coverage": 0, "coveredlines": 0, "coverablelines": 22, "totallines": 38, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 0, "coveredmethods": 0, "totalmethods": 5 },
+        { "name": "PlayerModel", "coverage": 100, "coveredlines": 31, "coverablelines": 31, "totallines": 51, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 100, "coveredmethods": 7, "totalmethods": 7 },
+        { "name": "PlayerView", "coverage": 0, "coveredlines": 0, "coverablelines": 18, "totallines": 31, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 0, "coveredmethods": 0, "totalmethods": 5 },
+        { "name": "SceneLoader", "coverage": 0, "coveredlines": 0, "coverablelines": 6, "totallines": 12, "branchcoverage": null, "coveredbranches": 0, "totalbranches": 0, "methodcoverage": 0, "coveredmethods": 0, "totalmethods": 2 } ] } ]
+  }
+}
