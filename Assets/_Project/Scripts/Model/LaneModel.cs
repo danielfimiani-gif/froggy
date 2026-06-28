@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-class LaneModel {
+public class LaneModel {
     public int RowIndex { get; private set; }
     private List<CarModel> cars = new();
     private float speed;

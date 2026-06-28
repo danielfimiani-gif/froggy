@@ -1,4 +1,9 @@
 [*.cs]
+# Indentación: 4 espacios (convención estándar de C#/.NET/Unity)
+indent_style = space
+indent_size = 4
+tab_width = 4
+
 csharp_new_line_before_open_brace = none
 csharp_new_line_before_else = false
 csharp_new_line_before_catch = false
