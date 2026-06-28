@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-class PlayerAudioView : MonoBehaviour {
+public class PlayerAudioView : MonoBehaviour {
     [SerializeField] AudioSource source;
     [SerializeField] AudioClip hopClip;
     [SerializeField] AudioClip crashClip;

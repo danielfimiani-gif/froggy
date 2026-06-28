@@ -1,6 +1,6 @@
 using UnityEngine;
 
-class CarView : MonoBehaviour {
+public class CarView : MonoBehaviour {
     private CarModel model;
     private float zPosition;
 

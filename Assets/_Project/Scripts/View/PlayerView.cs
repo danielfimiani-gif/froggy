@@ -1,6 +1,6 @@
 using UnityEngine;
 
-class PlayerView : MonoBehaviour {
+public class PlayerView : MonoBehaviour {
     private PlayerModel model;
     public float CellSize = 1.0f;
 

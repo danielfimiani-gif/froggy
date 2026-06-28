@@ -1,6 +1,6 @@
 using System;
 
-class GameStateModel {
+public class GameStateModel {
     public EGameState State { get; private set; }
 
     public event Action<EGameState> OnStateChanged;

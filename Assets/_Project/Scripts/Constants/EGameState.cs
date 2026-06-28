@@ -1,4 +1,4 @@
-enum EGameState {
+public enum EGameState {
     Playing,
     Won,
 }

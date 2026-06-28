@@ -11,5 +11,7 @@ levantar el motor de Unity.
 - CollisionDetector : Se creó la clase C# pura con el método Overlap bool para podes testear el método.
 - PlayerModel se cambió su accesibilidad de internal a public para poder instanciarlo en los test.
 - CarModel se cambió su accesibilidad de internal a public para poder instanciarlo en los test.
-
-
+- GameStateModel, EGameState se cambió su accesibilidad a public para poder instanciarlo en los test.
+- CarView se cambio su accesibilidad a public para poder instanciarlo en playmode.
+- PlayerView se cambió su accesibilidad a pulbic para poder instanciarlo en playmode.
+- PlayerAudioView se cambió su accesibilidad a public para poder instanciarlo en playmode.
