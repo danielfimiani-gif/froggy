@@ -91,12 +91,12 @@ Se deja también tanto del pasaje de los tests como de la covertura.
 
 ### EditMode
 
-![Image](./Docs/editmode)
+![Image](./Docs/editmode.png)
 
 ### PlayMode
 
-![Image](./Docs/playmode)
+![Image](./Docs/playmode.png)
 
 ### Coverage
 
-![Image](./Docs/coverage)
+![Image](./Docs/coverage.png)
