@@ -143,6 +143,39 @@ Los artifacts se publican con `retention-days: 90` (el máximo para repos públi
 el valor por defecto de 14 días, los builds desaparecen antes de que alguien llegue a
 descargarlos.
 
+### Releases
+
+Los artifacts viven dentro de cada corrida, en la pestaña Actions: para bajarlos hay que
+entrar al run y buscarlos. Un **Release**, en cambio, queda en la portada del repositorio
+y se descarga con un click.
+
+El job `release` funciona en dos modos según qué haya disparado el workflow:
+
+- **Push a `master`** → actualiza un release llamado `latest` con los últimos builds.
+  Siempre hay algo descargable desde la portada, sin tener que acordarse de nada.
+- **Push de un tag `v*`** → crea un release versionado que queda fijo:
+
+  ```bash
+  git tag v1.0.0
+  git push origin v1.0.0
+  ```
+
+La convención habitual es que un release sea **solo** un hito versionado, y que los builds
+de cada commit vivan como artifacts. Esa convención tiene sentido cuando hay usuarios
+reales que necesitan saber en qué versión están y no pueden actualizar sin aviso.
+
+En un proyecto como este —donde quien lo descarga entra una vez y quiere el ejecutable—
+ese problema no existe, y obligar a taggear a mano solo agrega un paso que se puede
+olvidar. Por eso `latest` se actualiza solo, y el versionado por tag queda disponible
+para cuando haga falta.
+
+| Mecanismo | Dónde se ve | Cuándo se genera |
+|-----------|-------------|------------------|
+| Artifacts | Pestaña Actions, dentro de cada run | En cada push (90 días) |
+| GitHub Pages | URL pública, jugable | En cada push a `master` |
+| Release `latest` | Portada del repositorio | En cada push a `master` |
+| Release versionado | Portada del repositorio | Al pushear un tag `v*` |
+
 ## Un bug que encontró el CI
 
 La primera corrida con licencia válida dejó los tests en verde y **los dos builds en rojo**:

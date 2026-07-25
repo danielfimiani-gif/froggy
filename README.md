@@ -120,4 +120,6 @@ El pipeline vive en [`.github/workflows/main.yml`](./.github/workflows/main.yml)
 
 Los builds esperan a que los tests pasen, y todo queda publicado como artifacts descargables (90 días).
 
+Además publica un **Release** con los dos builds adjuntos, descargable desde la portada del repositorio: en cada push a `master` actualiza el release `latest`, y si se pushea un tag `v*` crea uno versionado.
+
 El detalle de cómo está armado, el porqué de cada decisión, el bug que encontró el CI y cómo se resuelve la licencia de Unity está en el documento de [CI/CD](./Docs/ci-cd.md).
