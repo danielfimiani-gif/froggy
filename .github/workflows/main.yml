@@ -200,8 +200,6 @@ jobs:
           done
 
           ls -lh "${ROOT}"/*.zip
-          cd ..
-          ls -lh ./*.zip
 
       - name: Publicar o actualizar el release
         env:
