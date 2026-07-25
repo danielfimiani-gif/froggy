@@ -1,0 +1,138 @@
+name: Build project
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+# Si se pushea dos veces seguidas, cancela la corrida vieja.
+# Un build de Unity tarda mucho como para dejar corriendo trabajo que ya no sirve.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # 1) UNIT TESTS  (EditMode + PlayMode, en paralelo entre si)
+  # ---------------------------------------------------------------------------
+  test:
+    name: Test ${{ matrix.testMode }}
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        testMode:
+          - editmode
+          - playmode
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      # Cache propio de los tests: el Test Runner corre sobre el target del
+      # editor (Linux), NO sobre WebGL ni Windows. Mezclarlo con el cache de
+      # los builds haria que cada job le pise los artefactos al otro.
+      - uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-test-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-test-
+            Library-
+
+      - uses: game-ci/unity-test-runner@v4
+        id: tests
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          unityVersion: 6000.0.36f1
+          testMode: ${{ matrix.testMode }}
+          artifactsPath: ${{ matrix.testMode }}-artifacts
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          checkName: ${{ matrix.testMode }} Test Results
+          coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+Scripts'
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Test-results-${{ matrix.testMode }}
+          path: ${{ steps.tests.outputs.artifactsPath }}
+          retention-days: 14
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Coverage-results-${{ matrix.testMode }}
+          path: ${{ steps.tests.outputs.coveragePath }}
+          retention-days: 14
+
+  # ---------------------------------------------------------------------------
+  # 2) BUILDS  (WebGL + StandaloneWindows64, en paralelo entre si)
+  # ---------------------------------------------------------------------------
+  buildForAllSupportedPlatforms:
+    name: Build for ${{ matrix.targetPlatform }}
+    runs-on: ubuntu-latest
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - WebGL
+          - StandaloneWindows64
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      # El runner de GitHub trae ~14GB libres. La imagen de Unity + WebGL
+      # se los come. Sin esto el build muere con "no space left on device".
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          docker image prune --all --force
+          df -h
+
+      # Cache de Library POR PLATAFORMA. Unity guarda ahi los assets ya
+      # importados y compilados para el target activo: un cache compartido
+      # entre WebGL y Windows se pisa a si mismo y no sirve de nada.
+      # El hash invalida el cache solo cuando cambia el proyecto de verdad.
+      - uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.targetPlatform }}-
+            Library-
+
+      - uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          unityVersion: 6000.0.36f1
+          targetPlatform: ${{ matrix.targetPlatform }}
+          buildName: froggy
+          # El repo no tiene tags de git. El default (Semantic) los necesita
+          # para armar el numero de version y falla sin ellos.
+          versioning: None
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Build-${{ matrix.targetPlatform }}
+          path: build/${{ matrix.targetPlatform }}
+          retention-days: 14
