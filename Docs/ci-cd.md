@@ -73,6 +73,20 @@ Library-test-...` y tardó lo mismo que sin cache.
 Los tests tienen su propia entrada (`Library-test-`) porque el Test Runner corre sobre
 el target del editor (Linux), no sobre WebGL ni Windows.
 
+#### Los caches tienen scope por rama
+
+Un detalle que confunde: **una rama no ve los caches creados en otra rama.** La
+visibilidad va de la rama base hacia abajo — un branch hereda los caches de su base y
+los de la rama por defecto, pero nunca los de una rama hermana.
+
+Por eso la primera corrida en `master`, después de mergear, reportó `Cache not found`
+aunque la clave y el hash eran idénticos a los que ya existían en el branch de trabajo:
+estaban guardados bajo `refs/heads/ci/github-actions`, fuera de su alcance.
+
+No es un problema a resolver, sino algo a tener en cuenta al medir: **la primera corrida
+en una rama nueva siempre va sin cache**. Como `master` es la rama por defecto, sus
+caches sí quedan disponibles para todo el repositorio de ahí en adelante.
+
 ### `actions/cache@v4`, no `v3`
 
 GitHub retiró las versiones anteriores del action de cache. Un workflow con `v3` falla
