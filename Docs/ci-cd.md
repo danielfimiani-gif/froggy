@@ -187,6 +187,20 @@ para cuando haga falta.
 | Release `latest` | Portada del repositorio | En cada push a `master` |
 | Release versionado | Portada del repositorio | Al pushear un tag `v*` |
 
+#### El `index.html` tiene que quedar en la raíz del zip
+
+`unity-builder` aplica el `buildName` distinto según la plataforma: en Windows nombra el
+ejecutable y deja `froggy.exe` suelto en la raíz, pero en WebGL crea una carpeta
+`froggy/` con todo adentro.
+
+Ese nivel de más rompe la publicación en **itch.io**, que exige encontrar el `index.html`
+en la raíz del zip o rechaza el archivo.
+
+Por eso el step de empaquetado revisa cada artifact: si adentro hay **una sola carpeta y
+ningún archivo suelto**, empaqueta el contenido de esa carpeta en lugar de la carpeta
+misma. El de Windows queda igual, el de WebGL pierde el nivel sobrante, y no hace falta
+hardcodear el nombre del build.
+
 ## Un bug que encontró el CI
 
 La primera corrida con licencia válida dejó los tests en verde y **los dos builds en rojo**:

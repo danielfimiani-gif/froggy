@@ -172,13 +172,34 @@ jobs:
           path: artifacts
 
       # Un release adjunta archivos sueltos, no carpetas: hay que empaquetar.
+      #
+      # unity-builder aplica el buildName distinto segun el target: en Windows
+      # nombra el ejecutable (froggy.exe queda suelto), pero en WebGL crea una
+      # carpeta "froggy/" con todo adentro. Ese nivel de mas rompe itch.io, que
+      # exige el index.html en la raiz del zip.
+      #
+      # Por eso: si dentro de un artifact hay una sola carpeta y nada mas, se
+      # empaqueta el contenido de esa carpeta en vez de la carpeta misma.
       - name: Empaquetar cada plataforma
         run: |
-          cd artifacts
-          for dir in */; do
-            name="${dir%/}"
-            (cd "$dir" && zip -qr "../../${name}.zip" .)
+          set -euo pipefail
+          ROOT="${PWD}"
+
+          for dir in artifacts/*/; do
+            name="$(basename "${dir}")"
+            src="${ROOT}/${dir}"
+
+            total=$(find "${src}" -mindepth 1 -maxdepth 1 | wc -l)
+            dirs=$(find "${src}" -mindepth 1 -maxdepth 1 -type d | wc -l)
+            if [ "${total}" -eq 1 ] && [ "${dirs}" -eq 1 ]; then
+              src="$(find "${src}" -mindepth 1 -maxdepth 1 -type d)"
+              echo "${name}: se empaqueta el contenido de $(basename "${src}")/"
+            fi
+
+            (cd "${src}" && zip -qr "${ROOT}/${name}.zip" .)
           done
+
+          ls -lh "${ROOT}"/*.zip
           cd ..
           ls -lh ./*.zip
 
