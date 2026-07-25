@@ -143,50 +143,7 @@ jobs:
           retention-days: 90
 
   # ---------------------------------------------------------------------------
-  # 3) PUBLICAR EL WEBGL EN GITHUB PAGES
-  #
-  # Un build de WebGL es una pagina web: no se abre con doble click, necesita
-  # servirse por HTTP. Publicarlo en Pages lo deja jugable desde una URL.
-  #
-  # Requiere webGLDecompressionFallback activado en ProjectSettings: los
-  # archivos van comprimidos con Brotli y Pages no manda el header
-  # Content-Encoding que Unity espera.
-  # ---------------------------------------------------------------------------
-  deployWebGL:
-    name: Publicar WebGL en GitHub Pages
-    runs-on: ubuntu-latest
-    needs: buildForAllSupportedPlatforms
-    # Solo desde la rama principal: no tiene sentido publicar cada branch.
-    if: github.ref == 'refs/heads/master'
-
-    permissions:
-      pages: write
-      id-token: write
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - name: Descargar el build de WebGL
-        uses: actions/download-artifact@v4
-        with:
-          name: Build-WebGL
-          path: webgl
-
-      - uses: actions/configure-pages@v5
-
-      # El index.html queda dentro de la carpeta del buildName, no en la raiz.
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: webgl/froggy
-
-      - name: Deploy
-        id: deployment
-        uses: actions/deploy-pages@v4
-
-  # ---------------------------------------------------------------------------
-  # 4) PUBLICAR UN RELEASE CON LOS BUILDS
+  # 3) PUBLICAR UN RELEASE CON LOS BUILDS
   #
   # Funciona en dos modos, segun que dispare el workflow:
   #
@@ -242,16 +199,21 @@ jobs:
           NOTES="Builds generados automaticamente por GitHub Actions desde el commit \`${GITHUB_SHA::7}\`.
 
           - **Build-StandaloneWindows64.zip** — ejecutable de Windows 64 bits: descomprimir y correr \`froggy.exe\`.
-          - **Build-WebGL.zip** — necesita servirse por HTTP, no se abre con doble click.
-            Se puede jugar directamente en https://danielfimiani-gif.github.io/froggy/"
+          - **Build-WebGL.zip** — build web lista para subir a itch.io o similar. No se abre con doble click: necesita un servidor."
+
+          # gh infiere el repositorio leyendo el .git del directorio, y este job
+          # no hace checkout (solo descarga artifacts). Se lo pasamos explicito
+          # con --repo en vez de clonar el repo entero al pedo.
+          REPO="${GITHUB_REPOSITORY}"
 
           # Si el release ya existe se reemplazan los adjuntos (--clobber);
           # si no, se crea. Asi "latest" queda siempre apuntando al ultimo build.
-          if gh release view "${TAG}" > /dev/null 2>&1; then
-            gh release edit "${TAG}" --title "${TITLE}" --notes "${NOTES}"
-            gh release upload "${TAG}" ./Build-WebGL.zip ./Build-StandaloneWindows64.zip --clobber
+          if gh release view "${TAG}" --repo "${REPO}" > /dev/null 2>&1; then
+            gh release edit "${TAG}" --repo "${REPO}" --title "${TITLE}" --notes "${NOTES}"
+            gh release upload "${TAG}" --repo "${REPO}" \
+              ./Build-WebGL.zip ./Build-StandaloneWindows64.zip --clobber
           else
-            gh release create "${TAG}" \
+            gh release create "${TAG}" --repo "${REPO}" \
               --title "${TITLE}" \
               --notes "${NOTES}" \
               ./Build-WebGL.zip \

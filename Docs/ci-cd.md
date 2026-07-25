@@ -116,26 +116,38 @@ Los runners de GitHub traen unos 14 GB libres. La imagen de Unity más el build 
 los agotan, y el job muere con *"no space left on device"*. El step borra herramientas
 preinstaladas que este pipeline no usa (.NET, Android SDK, GHC, CodeQL).
 
-### Publicación del WebGL en GitHub Pages
+### El build de WebGL y los servidores estáticos
 
 Un build de WebGL **es una página web**: no se abre haciendo doble click en el
-`index.html`, necesita servirse por HTTP. Por eso, además de subirlo como artifact,
-el job `deployWebGL` lo publica en GitHub Pages y queda jugable en
-[https://danielfimiani-gif.github.io/froggy/](https://danielfimiani-gif.github.io/froggy/).
+`index.html`, necesita servirse por HTTP. El pipeline lo publica como un `.zip` listo
+para subir a itch.io o cualquier hosting estático.
 
-Ese job corre solo cuando el push fue a `master` (`if: github.ref == 'refs/heads/master'`):
-no tiene sentido publicar cada rama de trabajo.
+Para que funcione fuera de un servidor configurado a medida hay dos ajustes en Player
+Settings, y **la combinación importa**:
 
-Dos detalles que hacen falta para que funcione:
+- **`webGLDecompressionFallback` activado.** Unity comprime los archivos con Brotli y
+  espera que el servidor mande el header `Content-Encoding: br`. itch.io, GitHub Pages y
+  la mayoría de los hostings estáticos no lo hacen, y el juego muere al cargar. Con el
+  fallback, Unity embebe un descompresor en JavaScript y el build anda en cualquier
+  servidor, manteniendo la compresión (y por lo tanto el tamaño chico). Los archivos
+  pasan a tener extensión `.unityweb` en lugar de `.br`.
 
-- El `index.html` no queda en la raíz del artifact, sino dentro de una carpeta con el
-  `buildName` (`webgl/froggy`). Es lo que se le pasa a `upload-pages-artifact`.
-- **`webGLDecompressionFallback` tiene que estar activado** en Player Settings. Unity
-  comprime los archivos con Brotli y espera que el servidor mande el header
-  `Content-Encoding: br`; GitHub Pages no lo hace y el juego muere al cargar con
-  *"Unable to parse Build/froggy.framework.js.br"*. Con el fallback activado, Unity
-  embebe un descompresor en JavaScript y el build funciona en cualquier servidor,
-  manteniendo la compresión (y por lo tanto el tamaño chico).
+- **`webGLDataCaching` desactivado.** Es un bug de Unity 6: con *Data Caching* y
+  *Decompression Fallback* **activados al mismo tiempo**, el loader llama a
+  `cacheControl(undefined)` y el juego no arranca:
+
+  ```
+  Uncaught (in promise) TypeError: Cannot read properties of undefined (reading 'match')
+      at Object.cacheControl (froggy.loader.js:1:952)
+  ```
+
+  Está reportado en el issue tracker de Unity y afecta a `6000.0.35f1` en adelante
+  (este proyecto usa `6000.0.36f1`). No pasa en `6000.0.34f1`.
+
+  De los dos, el que se sacrifica es el caching: el fallback es un **requisito** para
+  que el build cargue en un hosting estático, mientras que el caching es solo una
+  optimización de recargas (guarda el build en IndexedDB). Sin él, la primera carga es
+  igual de rápida; solo las siguientes dejan de aprovechar el cache del navegador.
 
 ### Retención de artifacts
 
@@ -172,7 +184,6 @@ para cuando haga falta.
 | Mecanismo | Dónde se ve | Cuándo se genera |
 |-----------|-------------|------------------|
 | Artifacts | Pestaña Actions, dentro de cada run | En cada push (90 días) |
-| GitHub Pages | URL pública, jugable | En cada push a `master` |
 | Release `latest` | Portada del repositorio | En cada push a `master` |
 | Release versionado | Portada del repositorio | Al pushear un tag `v*` |
 
