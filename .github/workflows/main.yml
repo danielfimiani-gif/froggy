@@ -43,7 +43,6 @@ jobs:
           key: Library-test-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
             Library-test-
-            Library-
 
       - uses: game-ci/unity-test-runner@v4
         id: tests
@@ -110,13 +109,17 @@ jobs:
       # importados y compilados para el target activo: un cache compartido
       # entre WebGL y Windows se pisa a si mismo y no sirve de nada.
       # El hash invalida el cache solo cuando cambia el proyecto de verdad.
+      #
+      # OJO: el restore-key NO debe ser el prefijo generico "Library-".
+      # Ese prefijo matchea cualquier cache (incluido el de los tests) y
+      # Unity termina reimportando todo igual, con el costo extra de bajar
+      # ~1 GB inutil. Solo cae al cache de su propia plataforma.
       - uses: actions/cache@v4
         with:
           path: Library
           key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
             Library-${{ matrix.targetPlatform }}-
-            Library-
 
       - uses: game-ci/unity-builder@v4
         env:
