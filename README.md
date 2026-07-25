@@ -105,6 +105,8 @@ Se deja también tanto del pasaje de los tests como de la covertura.
 
 [![Build project](https://github.com/danielfimiani-gif/froggy/actions/workflows/main.yml/badge.svg)](https://github.com/danielfimiani-gif/froggy/actions/workflows/main.yml)
 
+**[▶ Jugar en el navegador](https://danielfimiani-gif.github.io/froggy/)** — la build de WebGL se publica sola en GitHub Pages con cada push a `master`.
+
 Como consigna para el exámen final se pide automatizar el proyecto con GitHub Actions.
 
 Sobre las correcciones de los TPs 2 y 3: no hubo ninguna que aplicar, ambos fueron aprobados con nota 10.
@@ -114,7 +116,8 @@ El pipeline vive en [`.github/workflows/main.yml`](./.github/workflows/main.yml)
 - Los **Unit Tests** de EditMode y PlayMode, con reporte de cobertura.
 - La build de **WebGL**, cacheando la carpeta `Library`.
 - En paralelo a la anterior, la build de **StandaloneWindows64**.
+- Y si el push fue a `master`, publica el WebGL en **GitHub Pages** para poder jugarlo online.
 
-Los builds esperan a que los tests pasen, y todo queda publicado como artifacts descargables.
+Los builds esperan a que los tests pasen, y todo queda publicado como artifacts descargables (90 días).
 
 El detalle de cómo está armado, el porqué de cada decisión, el bug que encontró el CI y cómo se resuelve la licencia de Unity está en el documento de [CI/CD](./Docs/ci-cd.md).

@@ -64,7 +64,7 @@ jobs:
         with:
           name: Test-results-${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.artifactsPath }}
-          retention-days: 14
+          retention-days: 90
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
@@ -72,7 +72,7 @@ jobs:
         with:
           name: Coverage-results-${{ matrix.testMode }}
           path: ${{ steps.tests.outputs.coveragePath }}
-          retention-days: 14
+          retention-days: 90
 
   # ---------------------------------------------------------------------------
   # 2) BUILDS  (WebGL + StandaloneWindows64, en paralelo entre si)
@@ -134,8 +134,53 @@ jobs:
           # para armar el numero de version y falla sin ellos.
           versioning: None
 
+      # 90 dias (el maximo para repos publicos). Con 14 los builds se borran
+      # antes de que alguien llegue a descargarlos.
       - uses: actions/upload-artifact@v4
         with:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
-          retention-days: 14
+          retention-days: 90
+
+  # ---------------------------------------------------------------------------
+  # 3) PUBLICAR EL WEBGL EN GITHUB PAGES
+  #
+  # Un build de WebGL es una pagina web: no se abre con doble click, necesita
+  # servirse por HTTP. Publicarlo en Pages lo deja jugable desde una URL.
+  #
+  # Requiere webGLDecompressionFallback activado en ProjectSettings: los
+  # archivos van comprimidos con Brotli y Pages no manda el header
+  # Content-Encoding que Unity espera.
+  # ---------------------------------------------------------------------------
+  deployWebGL:
+    name: Publicar WebGL en GitHub Pages
+    runs-on: ubuntu-latest
+    needs: buildForAllSupportedPlatforms
+    # Solo desde la rama principal: no tiene sentido publicar cada branch.
+    if: github.ref == 'refs/heads/master'
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Descargar el build de WebGL
+        uses: actions/download-artifact@v4
+        with:
+          name: Build-WebGL
+          path: webgl
+
+      - uses: actions/configure-pages@v5
+
+      # El index.html queda dentro de la carpeta del buildName, no en la raiz.
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: webgl/froggy
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

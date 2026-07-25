@@ -116,6 +116,33 @@ Los runners de GitHub traen unos 14 GB libres. La imagen de Unity más el build 
 los agotan, y el job muere con *"no space left on device"*. El step borra herramientas
 preinstaladas que este pipeline no usa (.NET, Android SDK, GHC, CodeQL).
 
+### Publicación del WebGL en GitHub Pages
+
+Un build de WebGL **es una página web**: no se abre haciendo doble click en el
+`index.html`, necesita servirse por HTTP. Por eso, además de subirlo como artifact,
+el job `deployWebGL` lo publica en GitHub Pages y queda jugable en
+[https://danielfimiani-gif.github.io/froggy/](https://danielfimiani-gif.github.io/froggy/).
+
+Ese job corre solo cuando el push fue a `master` (`if: github.ref == 'refs/heads/master'`):
+no tiene sentido publicar cada rama de trabajo.
+
+Dos detalles que hacen falta para que funcione:
+
+- El `index.html` no queda en la raíz del artifact, sino dentro de una carpeta con el
+  `buildName` (`webgl/froggy`). Es lo que se le pasa a `upload-pages-artifact`.
+- **`webGLDecompressionFallback` tiene que estar activado** en Player Settings. Unity
+  comprime los archivos con Brotli y espera que el servidor mande el header
+  `Content-Encoding: br`; GitHub Pages no lo hace y el juego muere al cargar con
+  *"Unable to parse Build/froggy.framework.js.br"*. Con el fallback activado, Unity
+  embebe un descompresor en JavaScript y el build funciona en cualquier servidor,
+  manteniendo la compresión (y por lo tanto el tamaño chico).
+
+### Retención de artifacts
+
+Los artifacts se publican con `retention-days: 90` (el máximo para repos públicos). Con
+el valor por defecto de 14 días, los builds desaparecen antes de que alguien llegue a
+descargarlos.
+
 ## Un bug que encontró el CI
 
 La primera corrida con licencia válida dejó los tests en verde y **los dos builds en rojo**:
